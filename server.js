@@ -41,11 +41,10 @@ async function listAllObjects() {
 }
 
 app.get("/download-all", async (req, res) => {
-  const tempDir = path.join(__dirname, "temp");
-  const zipPath = path.join(__dirname, "s3_files.zip");
+  const downloadsDir = path.join(__dirname, "downloads");
 
   try {
-    await fs.emptyDir(tempDir); // Clear temp folder
+    await fs.emptyDir(downloadsDir); // Clear downloads folder
 
     // Fetch file list from S3
     const filesToDownload = await listAllObjects();
@@ -65,7 +64,7 @@ app.get("/download-all", async (req, res) => {
 
     // Download each file
     for (let file of filesToDownload) {
-      const filePath = path.join(tempDir, file.Key); // Preserve directory structure
+      const filePath = path.join(downloadsDir, file.Key); // Preserve directory structure
       await fs.ensureDir(path.dirname(filePath)); // Ensure parent directories exist
 
       const fileStream = fs.createWriteStream(filePath);
